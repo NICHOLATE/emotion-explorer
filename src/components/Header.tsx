@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, BarChart3, Sparkles, Zap } from 'lucide-react';
+import { MessageSquareHeart, BarChart3, Sparkles, Zap } from 'lucide-react';
+import { UsageGuide } from './UsageGuide';
 
 export const Header: React.FC = () => {
   return (
@@ -25,7 +26,7 @@ export const Header: React.FC = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-primary/30 rounded-2xl blur-xl" />
             <div className="relative p-3 rounded-2xl bg-gradient-to-br from-primary/20 to-purple-500/20 border border-primary/30">
-              <Brain className="w-8 h-8 text-primary" />
+              <MessageSquareHeart className="w-8 h-8 text-primary" />
             </div>
           </div>
         </motion.div>
@@ -36,7 +37,7 @@ export const Header: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <span className="gradient-text">Sentiment</span> Analyzer
+          <span className="gradient-text">Opinion</span>Me
         </motion.h1>
 
         <motion.p
@@ -50,7 +51,7 @@ export const Header: React.FC = () => {
         </motion.p>
 
         <motion.div
-          className="flex items-center justify-center gap-6 text-sm text-muted-foreground"
+          className="flex items-center justify-center gap-6 text-sm text-muted-foreground mb-6"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
@@ -67,6 +68,14 @@ export const Header: React.FC = () => {
             <Sparkles className="w-4 h-4 text-purple-400" />
             <span>AI-Powered</span>
           </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          <UsageGuide />
         </motion.div>
       </div>
     </motion.header>
