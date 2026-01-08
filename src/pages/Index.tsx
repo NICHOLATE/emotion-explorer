@@ -11,8 +11,10 @@ import { SentimentChart } from '@/components/SentimentChart';
 import { SummaryStats } from '@/components/SummaryStats';
 import { ExportOptions } from '@/components/ExportOptions';
 import { ModelLoading } from '@/components/ModelLoading';
+import { SplashScreen } from '@/components/SplashScreen';
+import { SentimentPopup } from '@/components/SentimentPopup';
 import { useSentimentAnalysis } from '@/hooks/useSentimentAnalysis';
-import { calculateSummary } from '@/lib/sentimentAnalyzer';
+import { calculateSummary, SentimentResult } from '@/lib/sentimentAnalyzer';
 import { toast } from 'sonner';
 
 const Index = () => {
@@ -31,17 +33,22 @@ const Index = () => {
 
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
   const [batchTexts, setBatchTexts] = useState<string[]>([]);
+  const [showSplash, setShowSplash] = useState(true);
+  const [popupResult, setPopupResult] = useState<SentimentResult | null>(null);
 
   const summary = calculateSummary(results);
 
   useEffect(() => {
-    // Pre-load model on mount
-    loadModel();
-  }, []);
+    // Pre-load model after splash
+    if (!showSplash) {
+      loadModel();
+    }
+  }, [showSplash]);
 
   const handleSingleAnalysis = async (text: string) => {
     const result = await analyzeText(text);
     if (result) {
+      setPopupResult(result);
       toast.success(`Analyzed as ${result.label} with ${(result.confidence * 100).toFixed(0)}% confidence`);
     }
   };
@@ -59,8 +66,21 @@ const Index = () => {
     toast.info(`Loaded ${texts.length} texts from file`);
   };
 
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Sentiment Popup */}
+      <SentimentPopup
+        isOpen={!!popupResult}
+        onClose={() => setPopupResult(null)}
+        sentiment={popupResult?.label || 'neutral'}
+        confidence={popupResult?.confidence || 0}
+        text={popupResult?.text || ''}
+      />
+
       <div className="container max-w-6xl mx-auto px-4 py-8">
         <Header />
 
@@ -242,20 +262,15 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <p>
-            Powered by{' '}
-            <a
-              href="https://huggingface.co/Xenova/distilbert-base-uncased-finetuned-sst-2-english"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              DistilBERT
-            </a>{' '}
-            via Hugging Face Transformers.js
+          <p className="text-lg font-semibold text-foreground mb-2">
+            <span className="gradient-text">Opinion</span>Me
           </p>
-          <p className="mt-2">
-            Model: distilbert-base-uncased-finetuned-sst-2-english • Runs entirely in your browser
+          <p className="flex items-center justify-center gap-2 mb-2">
+            <span>Powered by</span>
+            <span className="font-semibold text-primary">AI Syndicate</span>
+          </p>
+          <p className="text-xs">
+            Analysis runs locally in your browser using Hugging Face Transformers
           </p>
         </motion.footer>
       </div>

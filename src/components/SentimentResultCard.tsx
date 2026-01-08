@@ -5,6 +5,7 @@ import { SentimentResult, SentimentLabel } from '@/lib/sentimentAnalyzer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { FullReport } from './FullReport';
 
 interface SentimentResultCardProps {
   result: SentimentResult;
@@ -136,6 +137,11 @@ export const SentimentResultCard: React.FC<SentimentResultCardProps> = ({
             </div>
           </div>
         )}
+
+        {/* Full Report Button */}
+        <div className="mt-4 pt-3 border-t border-border">
+          <FullReport result={result} />
+        </div>
       </div>
     </motion.div>
   );

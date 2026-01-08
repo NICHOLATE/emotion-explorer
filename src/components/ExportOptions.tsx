@@ -43,38 +43,47 @@ export const ExportOptions: React.FC<ExportOptionsProps> = ({ results, disabled 
     const doc = new jsPDF();
     const summary = calculateSummary(results);
     
-    // Title
-    doc.setFontSize(20);
+    // Brand Header
+    doc.setFontSize(24);
     doc.setTextColor(59, 130, 246);
-    doc.text('Sentiment Analysis Report', 20, 20);
+    doc.text('OpinionMe', 20, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(128, 128, 128);
+    doc.text('Powered by AI Syndicate', 20, 28);
+    
+    // Title
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Sentiment Analysis Report', 20, 42);
     
     // Timestamp
     doc.setFontSize(10);
     doc.setTextColor(128, 128, 128);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 30);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
     
     // Summary section
     doc.setFontSize(14);
     doc.setTextColor(0, 0, 0);
-    doc.text('Summary', 20, 45);
+    doc.text('Summary', 20, 65);
     
     doc.setFontSize(11);
-    doc.text(`Total Analyzed: ${summary.total}`, 25, 55);
+    doc.text(`Total Analyzed: ${summary.total}`, 25, 75);
     doc.setTextColor(34, 197, 94);
-    doc.text(`Positive: ${summary.positive} (${((summary.positive / summary.total) * 100).toFixed(1)}%)`, 25, 62);
+    doc.text(`Positive: ${summary.positive} (${((summary.positive / summary.total) * 100).toFixed(1)}%)`, 25, 82);
     doc.setTextColor(239, 68, 68);
-    doc.text(`Negative: ${summary.negative} (${((summary.negative / summary.total) * 100).toFixed(1)}%)`, 25, 69);
+    doc.text(`Negative: ${summary.negative} (${((summary.negative / summary.total) * 100).toFixed(1)}%)`, 25, 89);
     doc.setTextColor(234, 179, 8);
-    doc.text(`Neutral: ${summary.neutral} (${((summary.neutral / summary.total) * 100).toFixed(1)}%)`, 25, 76);
+    doc.text(`Neutral: ${summary.neutral} (${((summary.neutral / summary.total) * 100).toFixed(1)}%)`, 25, 96);
     doc.setTextColor(128, 128, 128);
-    doc.text(`Average Confidence: ${(summary.averageConfidence * 100).toFixed(1)}%`, 25, 83);
+    doc.text(`Average Confidence: ${(summary.averageConfidence * 100).toFixed(1)}%`, 25, 103);
     
     // Results section
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(14);
-    doc.text('Detailed Results', 20, 98);
+    doc.text('Detailed Results', 20, 118);
     
-    let yPos = 108;
+    let yPos = 128;
     const pageHeight = doc.internal.pageSize.height;
     
     results.forEach((result, index) => {
