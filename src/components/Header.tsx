@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquareHeart, BarChart3, Sparkles, Zap } from 'lucide-react';
 import { UsageGuide } from './UsageGuide';
+import { ThemeToggle } from './ThemeToggle';
 
 export const Header: React.FC = () => {
   return (
@@ -11,6 +12,11 @@ export const Header: React.FC = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
+      {/* Theme Toggle */}
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
+
       {/* Background gradient effects */}
       <div className="absolute inset-0 bg-mesh-gradient opacity-50" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />

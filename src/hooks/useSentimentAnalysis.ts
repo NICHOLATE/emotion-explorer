@@ -160,6 +160,10 @@ export function useSentimentAnalysis() {
     setResults(prev => prev.filter(r => r.id !== id));
   }, []);
 
+  const updateResults = useCallback((newResults: SentimentResult[]) => {
+    setResults(newResults);
+  }, []);
+
   return {
     status,
     loadingProgress,
@@ -171,5 +175,6 @@ export function useSentimentAnalysis() {
     analyzeBatch,
     clearResults,
     removeResult,
+    setResults: updateResults,
   };
 }
