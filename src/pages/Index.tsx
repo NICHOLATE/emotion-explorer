@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Trash2, PieChart, BarChart3, AlertCircle, RefreshCw } from 'lucide-react';
+import { Trash2, PieChart, BarChart3, AlertCircle, RefreshCw, Save } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { TextInput } from '@/components/TextInput';
 import { FileUpload } from '@/components/FileUpload';
@@ -13,7 +13,10 @@ import { ExportOptions } from '@/components/ExportOptions';
 import { ModelLoading } from '@/components/ModelLoading';
 import { SplashScreen } from '@/components/SplashScreen';
 import { SentimentPopup } from '@/components/SentimentPopup';
+import { AnalysisHistory } from '@/components/AnalysisHistory';
+import { ComparisonMode } from '@/components/ComparisonMode';
 import { useSentimentAnalysis } from '@/hooks/useSentimentAnalysis';
+import { useAnalysisHistory, HistorySession } from '@/hooks/useAnalysisHistory';
 import { calculateSummary, SentimentResult } from '@/lib/sentimentAnalyzer';
 import { toast } from 'sonner';
 
@@ -29,12 +32,22 @@ const Index = () => {
     analyzeBatch,
     clearResults,
     removeResult,
+    setResults,
   } = useSentimentAnalysis();
+
+  const {
+    sessions,
+    saveSession,
+    deleteSession,
+    clearHistory,
+    renameSession,
+  } = useAnalysisHistory();
 
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
   const [batchTexts, setBatchTexts] = useState<string[]>([]);
   const [showSplash, setShowSplash] = useState(true);
   const [popupResult, setPopupResult] = useState<SentimentResult | null>(null);
+  const [comparisonSession, setComparisonSession] = useState<HistorySession | null>(null);
 
   const summary = calculateSummary(results);
 
@@ -66,6 +79,28 @@ const Index = () => {
     toast.info(`Loaded ${texts.length} texts from file`);
   };
 
+  const handleSaveSession = () => {
+    if (results.length === 0) {
+      toast.error('No results to save');
+      return;
+    }
+    saveSession(results);
+    toast.success('Session saved to history');
+  };
+
+  const handleLoadSession = (loadedResults: SentimentResult[]) => {
+    setResults(loadedResults);
+    toast.success('Session loaded');
+  };
+
+  const handleCompareSession = (session: HistorySession) => {
+    if (results.length === 0) {
+      toast.error('Analyze some texts first to compare');
+      return;
+    }
+    setComparisonSession(session);
+  };
+
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
@@ -83,6 +118,40 @@ const Index = () => {
 
       <div className="container max-w-6xl mx-auto px-4 py-8">
         <Header />
+
+        {/* History Bar */}
+        <motion.div
+          className="flex items-center justify-end gap-3 mb-6"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <AnalysisHistory
+            sessions={sessions}
+            onLoadSession={handleLoadSession}
+            onDeleteSession={deleteSession}
+            onRenameSession={renameSession}
+            onClearHistory={clearHistory}
+            onCompareSession={handleCompareSession}
+          />
+          {results.length > 0 && (
+            <Button variant="outline" className="gap-2" onClick={handleSaveSession}>
+              <Save className="w-4 h-4" />
+              Save Session
+            </Button>
+          )}
+        </motion.div>
+
+        {/* Comparison Mode */}
+        <AnimatePresence>
+          {comparisonSession && results.length > 0 && (
+            <ComparisonMode
+              currentResults={results}
+              comparisonSession={comparisonSession}
+              onClose={() => setComparisonSession(null)}
+            />
+          )}
+        </AnimatePresence>
 
         {/* Main content */}
         <div className="space-y-8">
