@@ -15,6 +15,7 @@ import { SplashScreen } from '@/components/SplashScreen';
 import { SentimentPopup } from '@/components/SentimentPopup';
 import { AnalysisHistory } from '@/components/AnalysisHistory';
 import { ComparisonMode } from '@/components/ComparisonMode';
+import { SampleDatasets } from '@/components/SampleDatasets';
 import { useSentimentAnalysis } from '@/hooks/useSentimentAnalysis';
 import { useAnalysisHistory, HistorySession } from '@/hooks/useAnalysisHistory';
 import { calculateSummary, SentimentResult } from '@/lib/sentimentAnalyzer';
@@ -176,6 +177,13 @@ const Index = () => {
               </TabsContent>
 
               <TabsContent value="batch" className="space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <SampleDatasets
+                    onLoadDataset={handleFileLoaded}
+                    isDisabled={isAnalyzing || status === 'loading'}
+                  />
+                  <span className="text-sm text-muted-foreground">or upload your own file</span>
+                </div>
                 <FileUpload
                   onTextsLoaded={handleFileLoaded}
                   isDisabled={isAnalyzing || status === 'loading'}
