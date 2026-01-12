@@ -6,123 +6,125 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Professional Dark Theme - Deep Navy & Slate */
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
 
-    --card: 240 10% 6%;
-    --card-foreground: 0 0% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 240 10% 6%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
 
     --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 222 47% 8%;
 
-    --secondary: 240 5% 16%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 5% 16%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 240 5% 16%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 217 33% 20%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 50.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 240 5% 18%;
-    --input: 240 5% 18%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
     --ring: 217 91% 60%;
 
     --radius: 0.75rem;
 
-    /* Sentiment Colors */
-    --sentiment-positive: 160 84% 39%;
-    --sentiment-positive-soft: 160 84% 39%;
-    --sentiment-negative: 350 89% 60%;
-    --sentiment-negative-soft: 350 89% 60%;
-    --sentiment-neutral: 45 93% 47%;
-    --sentiment-neutral-soft: 45 93% 47%;
+    /* Sentiment Colors - Professional */
+    --sentiment-positive: 152 76% 42%;
+    --sentiment-positive-soft: 152 60% 45%;
+    --sentiment-negative: 0 72% 55%;
+    --sentiment-negative-soft: 0 65% 50%;
+    --sentiment-neutral: 38 92% 50%;
+    --sentiment-neutral-soft: 38 85% 55%;
 
-    /* Chart Colors */
-    --chart-positive: 160 84% 39%;
-    --chart-negative: 350 89% 60%;
-    --chart-neutral: 45 93% 47%;
+    /* Chart Colors - Professional */
+    --chart-positive: 152 76% 42%;
+    --chart-negative: 0 72% 55%;
+    --chart-neutral: 38 92% 50%;
     --chart-1: 217 91% 60%;
-    --chart-2: 280 65% 60%;
-    --chart-3: 160 84% 39%;
-    --chart-4: 45 93% 47%;
-    --chart-5: 350 89% 60%;
+    --chart-2: 262 83% 65%;
+    --chart-3: 152 76% 42%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 0 72% 55%;
 
-    /* Glass effect */
-    --glass-bg: 240 10% 8% / 0.6;
-    --glass-border: 240 5% 20% / 0.5;
+    /* Glass effect - Professional Dark */
+    --glass-bg: 222 47% 10% / 0.8;
+    --glass-border: 217 33% 25% / 0.5;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(280 65% 60%) 100%);
-    --gradient-positive: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 60% 50%) 100%);
-    --gradient-negative: linear-gradient(135deg, hsl(350 89% 60%) 0%, hsl(350 70% 50%) 100%);
-    --gradient-neutral: linear-gradient(135deg, hsl(45 93% 47%) 0%, hsl(35 90% 50%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(240 10% 8%) 0%, hsl(240 10% 5%) 100%);
+    /* Gradients - Professional */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(262 83% 65%) 100%);
+    --gradient-positive: linear-gradient(135deg, hsl(152 76% 42%) 0%, hsl(160 70% 45%) 100%);
+    --gradient-negative: linear-gradient(135deg, hsl(0 72% 55%) 0%, hsl(350 70% 50%) 100%);
+    --gradient-neutral: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(30 90% 55%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(222 47% 12%) 0%, hsl(222 47% 8%) 100%);
     
-    /* Shadows */
+    /* Shadows - Professional */
     --shadow-glow-primary: 0 0 40px hsl(217 91% 60% / 0.15);
-    --shadow-glow-positive: 0 0 30px hsl(160 84% 39% / 0.2);
-    --shadow-glow-negative: 0 0 30px hsl(350 89% 60% / 0.2);
-    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.3);
-  /* Light Theme Glass */
-  .light-theme .glass-card {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50 shadow-lg;
+    --shadow-glow-positive: 0 0 30px hsl(152 76% 42% / 0.15);
+    --shadow-glow-negative: 0 0 30px hsl(0 72% 55% / 0.15);
+    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
   }
-}
 
-  /* Light Theme */
+  /* Light Theme - Clean Professional */
   .light-theme {
-    --background: 0 0% 98%;
-    --foreground: 240 10% 10%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 217 91% 50%;
+    --primary: 217 91% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 5% 92%;
-    --secondary-foreground: 240 10% 10%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 240 5% 92%;
-    --muted-foreground: 240 5% 40%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 240 5% 92%;
-    --accent-foreground: 240 10% 10%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 62.8% 50.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5% 85%;
-    --input: 240 5% 85%;
-    --ring: 217 91% 50%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 53%;
 
     /* Sentiment Colors - Light */
-    --sentiment-positive: 160 84% 30%;
-    --sentiment-negative: 350 89% 50%;
-    --sentiment-neutral: 45 93% 40%;
+    --sentiment-positive: 152 76% 35%;
+    --sentiment-negative: 0 72% 50%;
+    --sentiment-neutral: 38 92% 42%;
 
     /* Glass effect - Light */
-    --glass-bg: 0 0% 100% / 0.8;
-    --glass-border: 240 5% 80% / 0.5;
+    --glass-bg: 0 0% 100% / 0.9;
+    --glass-border: 214 32% 85% / 0.5;
 
     /* Shadows - Light */
-    --shadow-glow-primary: 0 0 40px hsl(217 91% 60% / 0.1);
-    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.1);
+    --shadow-glow-primary: 0 0 40px hsl(217 91% 60% / 0.08);
+    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.08);
+  }
+
+  /* Light Theme Glass Card Override */
+  .light-theme .glass-card {
+    @apply bg-card/90 backdrop-blur-xl border border-border/50 shadow-lg;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
   }
 }
 

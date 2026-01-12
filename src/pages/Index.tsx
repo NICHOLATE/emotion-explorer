@@ -10,6 +10,7 @@ import { SentimentResultCard } from '@/components/SentimentResultCard';
 import { SentimentChart } from '@/components/SentimentChart';
 import { SummaryStats } from '@/components/SummaryStats';
 import { ExportOptions } from '@/components/ExportOptions';
+import { SingleTextExport } from '@/components/SingleTextExport';
 import { ModelLoading } from '@/components/ModelLoading';
 import { SplashScreen } from '@/components/SplashScreen';
 import { SentimentPopup } from '@/components/SentimentPopup';
@@ -49,6 +50,7 @@ const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [popupResult, setPopupResult] = useState<SentimentResult | null>(null);
   const [comparisonSession, setComparisonSession] = useState<HistorySession | null>(null);
+  const [lastSingleResult, setLastSingleResult] = useState<SentimentResult | null>(null);
 
   const summary = calculateSummary(results);
 
@@ -63,6 +65,7 @@ const Index = () => {
     const result = await analyzeText(text);
     if (result) {
       setPopupResult(result);
+      setLastSingleResult(result);
       toast.success(`Analyzed as ${result.label} with ${(result.confidence * 100).toFixed(0)}% confidence`);
     }
   };
@@ -169,11 +172,38 @@ const Index = () => {
                 <TabsTrigger value="batch">Batch Upload</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="single">
+              <TabsContent value="single" className="space-y-4">
                 <TextInput
                   onSubmit={handleSingleAnalysis}
                   isLoading={isAnalyzing || status === 'loading'}
                 />
+                
+                {/* Single Text Export Option */}
+                <AnimatePresence>
+                  {lastSingleResult && (
+                    <motion.div
+                      className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${
+                          lastSingleResult.label === 'positive' ? 'bg-sentiment-positive' :
+                          lastSingleResult.label === 'negative' ? 'bg-sentiment-negative' :
+                          'bg-sentiment-neutral'
+                        }`} />
+                        <div>
+                          <p className="text-sm font-medium capitalize">{lastSingleResult.label}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {(lastSingleResult.confidence * 100).toFixed(1)}% confidence
+                          </p>
+                        </div>
+                      </div>
+                      <SingleTextExport result={lastSingleResult} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </TabsContent>
 
               <TabsContent value="batch" className="space-y-4">
