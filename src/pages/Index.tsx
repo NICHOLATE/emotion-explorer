@@ -17,7 +17,8 @@ import { SentimentPopup } from '@/components/SentimentPopup';
 import { AnalysisHistory } from '@/components/AnalysisHistory';
 import { ComparisonMode } from '@/components/ComparisonMode';
 import { SampleDatasets } from '@/components/SampleDatasets';
-import { useSentimentAnalysis } from '@/hooks/useSentimentAnalysis';
+import { LanguageSelector, getLanguageName, getLanguageFlag } from '@/components/LanguageSelector';
+import { useSentimentAnalysis, MultiLanguageResult } from '@/hooks/useSentimentAnalysis';
 import { useAnalysisHistory, HistorySession } from '@/hooks/useAnalysisHistory';
 import { calculateSummary, SentimentResult } from '@/lib/sentimentAnalyzer';
 import { toast } from 'sonner';
@@ -29,8 +30,10 @@ const Index = () => {
     error,
     isAnalyzing,
     results,
+    selectedLanguage,
+    setSelectedLanguage,
     loadModel,
-    analyzeText,
+    smartAnalyze,
     analyzeBatch,
     clearResults,
     removeResult,
@@ -50,7 +53,7 @@ const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [popupResult, setPopupResult] = useState<SentimentResult | null>(null);
   const [comparisonSession, setComparisonSession] = useState<HistorySession | null>(null);
-  const [lastSingleResult, setLastSingleResult] = useState<SentimentResult | null>(null);
+  const [lastSingleResult, setLastSingleResult] = useState<MultiLanguageResult | null>(null);
 
   const summary = calculateSummary(results);
 
@@ -62,18 +65,21 @@ const Index = () => {
   }, [showSplash]);
 
   const handleSingleAnalysis = async (text: string) => {
-    const result = await analyzeText(text);
+    const result = await smartAnalyze(text, selectedLanguage);
     if (result) {
       setPopupResult(result);
       setLastSingleResult(result);
-      toast.success(`Analyzed as ${result.label} with ${(result.confidence * 100).toFixed(0)}% confidence`);
+      const langInfo = result.detectedLanguage 
+        ? ` (${getLanguageFlag(result.detectedLanguage)} ${getLanguageName(result.detectedLanguage)})`
+        : '';
+      toast.success(`Analyzed as ${result.label} with ${(result.confidence * 100).toFixed(0)}% confidence${langInfo}`);
     }
   };
 
   const handleBatchAnalysis = async () => {
     if (batchTexts.length === 0) return;
     
-    const result = await analyzeBatch(batchTexts);
+    const result = await analyzeBatch(batchTexts, selectedLanguage);
     toast.success(`Analyzed ${result.results.length} texts`);
     setBatchTexts([]);
   };
@@ -167,10 +173,19 @@ const Index = () => {
             transition={{ delay: 0.2 }}
           >
             <Tabs defaultValue="single" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="single">Single Text</TabsTrigger>
-                <TabsTrigger value="batch">Batch Upload</TabsTrigger>
-              </TabsList>
+              <div className="flex items-center justify-between mb-6">
+                <TabsList className="grid w-[280px] grid-cols-2">
+                  <TabsTrigger value="single">Single Text</TabsTrigger>
+                  <TabsTrigger value="batch">Batch Upload</TabsTrigger>
+                </TabsList>
+                
+                {/* Language Selector */}
+                <LanguageSelector
+                  value={selectedLanguage}
+                  onChange={setSelectedLanguage}
+                  disabled={isAnalyzing}
+                />
+              </div>
 
               <TabsContent value="single" className="space-y-4">
                 <TextInput
@@ -194,10 +209,22 @@ const Index = () => {
                           'bg-sentiment-neutral'
                         }`} />
                         <div>
-                          <p className="text-sm font-medium capitalize">{lastSingleResult.label}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium capitalize">{lastSingleResult.label}</p>
+                            {lastSingleResult.detectedLanguage && (
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                                {getLanguageFlag(lastSingleResult.detectedLanguage)} {getLanguageName(lastSingleResult.detectedLanguage)}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-muted-foreground">
                             {(lastSingleResult.confidence * 100).toFixed(1)}% confidence
                           </p>
+                          {lastSingleResult.translatedText && (
+                            <p className="text-xs text-muted-foreground mt-1 italic">
+                              Translation: "{lastSingleResult.translatedText.slice(0, 100)}..."
+                            </p>
+                          )}
                         </div>
                       </div>
                       <SingleTextExport result={lastSingleResult} />

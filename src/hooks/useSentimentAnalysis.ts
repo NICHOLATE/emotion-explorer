@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { pipeline, type TextClassificationPipeline } from '@huggingface/transformers';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   SentimentResult, 
   SentimentLabel, 
@@ -11,12 +12,18 @@ import {
 
 type ModelStatus = 'idle' | 'loading' | 'ready' | 'error';
 
+export interface MultiLanguageResult extends SentimentResult {
+  detectedLanguage?: string;
+  translatedText?: string | null;
+}
+
 export function useSentimentAnalysis() {
   const [status, setStatus] = useState<ModelStatus>('idle');
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<SentimentResult[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('auto');
   
   const classifierRef = useRef<TextClassificationPipeline | null>(null);
 
@@ -89,6 +96,52 @@ export function useSentimentAnalysis() {
     }
   };
 
+  // Multi-language analysis using AI
+  const analyzeTextMultiLanguage = useCallback(async (text: string, language: string = 'auto'): Promise<MultiLanguageResult | null> => {
+    setIsAnalyzing(true);
+    setError(null);
+
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('analyze-sentiment', {
+        body: { text, language }
+      });
+
+      if (fnError) {
+        console.error('Edge function error:', fnError);
+        throw new Error(fnError.message || 'Analysis failed');
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      const keywords = data.keywords?.map((word: string) => ({
+        word,
+        sentiment: data.sentiment as SentimentLabel,
+        weight: 1
+      })) || [];
+
+      return {
+        id: generateId(),
+        text,
+        label: data.sentiment as SentimentLabel,
+        confidence: data.confidence,
+        scores: data.scores,
+        keywords,
+        timestamp: new Date(),
+        detectedLanguage: data.detectedLanguage,
+        translatedText: data.translatedText,
+      };
+    } catch (err) {
+      console.error('Multi-language analysis error:', err);
+      setError(err instanceof Error ? err.message : 'Analysis failed');
+      return null;
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, []);
+
+  // Local English-only analysis (faster, no API)
   const analyzeText = useCallback(async (text: string): Promise<SentimentResult | null> => {
     if (!classifierRef.current) {
       await loadModel();
@@ -127,14 +180,32 @@ export function useSentimentAnalysis() {
     }
   }, [loadModel]);
 
-  const analyzeBatch = useCallback(async (texts: string[]): Promise<BatchAnalysisResult> => {
+  // Smart analyze - uses multi-language for non-English, local for English
+  const smartAnalyze = useCallback(async (text: string, language: string = 'auto'): Promise<MultiLanguageResult | null> => {
+    // For English or when local model is preferred, use local analysis
+    if (language === 'en' && classifierRef.current) {
+      const result = await analyzeText(text);
+      if (result) {
+        return {
+          ...result,
+          detectedLanguage: 'en',
+          translatedText: null,
+        };
+      }
+    }
+
+    // Use multi-language AI analysis
+    return analyzeTextMultiLanguage(text, language);
+  }, [analyzeText, analyzeTextMultiLanguage]);
+
+  const analyzeBatch = useCallback(async (texts: string[], language: string = 'auto'): Promise<BatchAnalysisResult> => {
     setIsAnalyzing(true);
     const batchResults: SentimentResult[] = [];
 
     try {
       for (const text of texts) {
         if (text.trim()) {
-          const result = await analyzeText(text);
+          const result = await smartAnalyze(text, language);
           if (result) {
             batchResults.push(result);
           }
@@ -150,7 +221,7 @@ export function useSentimentAnalysis() {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [analyzeText]);
+  }, [smartAnalyze]);
 
   const clearResults = useCallback(() => {
     setResults([]);
@@ -170,8 +241,12 @@ export function useSentimentAnalysis() {
     error,
     isAnalyzing,
     results,
+    selectedLanguage,
+    setSelectedLanguage,
     loadModel,
     analyzeText,
+    analyzeTextMultiLanguage,
+    smartAnalyze,
     analyzeBatch,
     clearResults,
     removeResult,
