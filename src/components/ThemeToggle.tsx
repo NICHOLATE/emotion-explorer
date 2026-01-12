@@ -4,7 +4,7 @@ import { Sun, Moon, Stars, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const ThemeToggle: React.FC = () => {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false); // Default to light
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export const ThemeToggle: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('light-theme', !isDark);
+    document.documentElement.classList.toggle('dark-theme', isDark);
     localStorage.setItem('opinionme-theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
